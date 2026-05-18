@@ -32,10 +32,8 @@ let score = 0;
 // ======================
 // LEVEL
 // ======================
-let level = "Easy";
-
-// speed game
-let gameSpeed = 150;
+let level = "Level 1";
+let gameSpeed = 250; // Level 1 speed
 
 // pause level
 let pauseLevel = false;
@@ -91,7 +89,7 @@ function moveSnake(){
         y:snake[0].y + dy
 };
 // wrap easy-medium
-if(level !== "Hard"){
+if(level !== "level 5"){
     if(head.x >= canvas.width)
     head.x = 0;
     if(head.x < 0)
@@ -101,7 +99,7 @@ if(level !== "Hard"){
     if(head.y < 0)
     head.y = canvas.height - 20;
 }
-    // hard mode
+    // Hard mode (tabrak dinding = game over) hanya di Level 5
     else{
         if(
             head.x < 0 ||
@@ -141,30 +139,47 @@ function checkFood(){
 // UPDATE LEVEL
 // ======================
 function updateLevel(){
-    // EASY
+    //  LEVEL 1
     if(score <= 25){
-        if(level !== "Easy"){
-            showLevelTransition("Easy");
+        if(level !== "Level 1"){
+            showLevelTransition("Level 1");
         }
-        level = "Easy";
+        level = "Level 1";
+        gameSpeed = 250;
+    }
+    // LEVEL 2
+    else if(score <= 50){
+        if(level !== "Level 2"){
+            showLevelTransition("Level 2");
+        }
+        level = "Level 2";
         gameSpeed = 200;
-}
-// MEDIUM
-else if(score <= 50){
-if(level !== "Medium"){
-showLevelTransition("Medium");
-}
-level = "Medium";
-gameSpeed = 150;
-}
-// HARD
-else{
-if(level !== "Hard"){
-showLevelTransition("Hard");
-}
-level = "Hard";
-gameSpeed = 75;
-}
+    }
+    // LEVEL 3
+    else if(score <= 75){
+        if(level !== "Level 3"){
+            showLevelTransition("Level 3");
+        }
+        level = "Level 3";
+        gameSpeed =150;
+    }
+    // LEVEL 4
+    else if(score <= 100){
+        if(level !== "Level 4"){
+            showLevelTransition("Level 4");
+        }
+        level = "Level 4";
+        gameSpeed = 100;
+    }
+    // LEVEL 5
+    else{
+        if(level !== "Level 5"){
+            showLevelTransition("Level 5");
+        }
+        level = "Level 5";
+        gameSpeed = 50;
+    }
+
 }
 // ======================
 // LEVEL TRANSITION
@@ -177,6 +192,7 @@ function showLevelTransition(newLevel){
     scoreText.innerText =
         "Score: " + score;
 }
+
 // ======================
 // NEXT LEVEL BUTTON
 // ======================
