@@ -22,6 +22,11 @@ Game ini merupakan implementasi Project-Based Learning (PJBL) yang berhasil kami
 
 Pada Level 5, ular *tidak dapat menembus dinding*. Jika ular menabrak dinding, permainan akan berakhir (*Game Over*).
 
+## Bonus Food
+* Muncul secara acak di arena permainan.
+* Memberikan +5 skor.
+* Akan menghilang setelah 7 detik jika tidak dimakan.
+
 ## Tujuan Permainan
 
 Makan makanan untuk menambah skor dan naik ke level berikutnya. Semakin tinggi level, kecepatan ular akan semakin meningkat sehingga permainan menjadi lebih menantang.
