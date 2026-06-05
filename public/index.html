@@ -6,22 +6,73 @@
 </head>
 <body>
 
-    <h1>Snake Game</h1>
+    <!-- HALAMAN PETUNJUK -->
+    <div id="instructionPage">
+        <div class="instr-card">
+            <div class="instr-logo">🐍 Snake Game</div>
+            <p class="instr-sub">Implementasi Project-Based Learning (PJBL)<br>Grafika Komputer — Kelas 4B</p>
 
-    <canvas id="game" width="400" height="400"></canvas>
-    
-    <!-- SCORE & LEVEL DI LUAR CANVAS -->
-    <p id="scoreDisplay" style="font-size:14px; margin:4px;">Score : 0 &nbsp;|&nbsp; Level : Level 1</p>
+            <div class="instr-section">
+                <h3>⌨ Kontrol Permainan</h3>
+                <div class="key-grid">
+                    <div class="key-item"><span class="key-badge">SPACE</span><span class="key-desc">Memulai permainan</span></div>
+                    <div class="key-item"><span class="key-badge">↑ ↓ ← →</span><span class="key-desc">Mengarahkan ular</span></div>
+                    <div class="key-item"><span class="key-badge">P</span><span class="key-desc">Pause permainan</span></div>
+                    <div class="key-item"><span class="key-badge">R</span><span class="key-desc">Restart permainan</span></div>
+                </div>
+            </div>
 
-    <!-- PANEL LEVEL -->
-    <div id="levelPanel" class="hidden">
-        <h2 id="levelText"></h2>
-        <p id="scoreText"></p>
-        
-        <button id="nextLevelBtn">
-        Mulai Level Selanjutnya
-        </button>
+            <div class="instr-section">
+                <h3>📊 Panduan Level & Skor</h3>
+                <table class="level-table">
+                    <tr><td>Level 1</td><td>Skor 0 – 21</td><td>Kecepatan lambat</td></tr>
+                    <tr><td>Level 2</td><td>Skor 22 – 31</td><td>Mulai cepat</td></tr>
+                    <tr><td>Level 3</td><td>Skor 32 – 41</td><td>Makin cepat</td></tr>
+                    <tr><td>Level 4</td><td>Skor 42 – 51</td><td>Sangat cepat</td></tr>
+                    <tr class="lvl5"><td>Level 5</td><td>Skor 52+</td><td>⚡ Maks. kecepatan</td></tr>
+                </table>
+            </div>
+
+            <div class="instr-section">
+                <div class="warn-box">
+                    ⚠ <strong>Aturan Level 5:</strong> Ular tidak bisa menembus dinding.
+                    Menabrak batas arena = <strong>Game Over!</strong>
+                </div>
+            </div>
+
+            <div class="instr-section">
+                <div class="bonus-box">
+                    🍊 <strong>Bonus Food</strong> — Muncul tiap kelipatan skor 15,
+                    memberikan <strong>+5 skor</strong>, hilang setelah <strong>7 detik</strong>.
+                </div>
+            </div>
+
+            <button id="startInstrBtn" onclick="masukGame()">▶ Mulai Permainan</button>
+        </div>
     </div>
+
+    <!-- HALAMAN GAME (tersembunyi dulu) -->
+    <div id="gamePage" class="hidden">
+        <h1>Snake Game</h1>
+
+        <p id="scoreDisplay">Score : 0 &nbsp;|&nbsp; Level : 1</p> 
+
+        <canvas id="game" width="400" height="400"></canvas>
+
+        <!-- PANEL LEVEL -->
+        <div id="levelPanel" class="hidden">
+            <h2 id="levelText"></h2>
+            <p id="scoreText"></p>
+            <button id="nextLevelBtn">Mulai Level Selanjutnya</button>
+        </div>
+    </div>
+
+    <script>
+        function masukGame() {
+            document.getElementById('instructionPage').classList.add('hidden');
+            document.getElementById('gamePage').classList.remove('hidden');
+        }
+    </script>
     <script src="game.js"></script>
 </body>
 </html>

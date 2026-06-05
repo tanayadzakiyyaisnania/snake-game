@@ -82,20 +82,33 @@ let gameOverSoundPlayed = false;
 // game started : false di layar awal, true setelah pemain menekan Space
 let gameStarted = false;
 
+let loopTimeout = null;
+
 // GENERATE FOOD
 // Menghasilkan posisi makanan acak dalam grid 20x20 px
-// (selalu kelipatan 20 agar sejajar dengan tubuh ular)
 function generateFood(){
-    return{
-        x:Math.floor(Math.random()*20)*20,
-        y:Math.floor(Math.random()*20)*20
-    };
+    let pos;
+    do {
+        pos = {
+            x: Math.floor(Math.random() * 20) * 20,
+            y: Math.floor(Math.random() * 20) * 20
+        };
+    } while (snake.some(part => part.x === pos.x && part.y === pos.y));
+    return pos;
 }
 function spawnBonusFood(){
-    bonusFood = {
-        x: Math.floor(Math.random()*20)*20,
-        y: Math.floor(Math.random()*20)*20
-    };
+    let pos;
+    do {
+        pos = {
+            x: Math.floor(Math.random() * 20) * 20,
+            y: Math.floor(Math.random() * 20) * 20
+        };
+    } while (
+        snake.some(part => part.x === pos.x && part.y === pos.y) ||
+        (pos.x === food.x && pos.y === food.y)
+    );
+    bonusFood = pos;
+
     // hilang setelah 7000ms = 7 detik
     bonusTimer = setTimeout(()=>{
         bonusFood = null;
@@ -103,11 +116,15 @@ function spawnBonusFood(){
 }
 
 // DRAW SNAKE
-// Menggambar setiap segmen ular sebagai kotak hijau 20x20 px
+// Menggambar kepala ular sebagai kotak merah, badan ular sebagai kotak hijau 20x20 px
 function drawSnake(){
-    snake.forEach(part=>{
-        ctx.fillStyle="green";
-        ctx.fillRect(part.x,part.y,20,20);
+    snake.forEach((part, index)=>{
+        if(index === 0){
+            ctx.fillStyle = "cyan";    // kepala
+        } else {
+            ctx.fillStyle = "green";  // badan
+        }
+        ctx.fillRect(part.x, part.y, 20, 20);
     });
 }
 
@@ -127,10 +144,10 @@ function drawBonusFood(){
 // DRAW SCORE
 function drawScore(){
     document.getElementById("scoreDisplay").innerText = 
-        "Score : " + score + "  |  Level : " + level;
+        "Score : " + score + "  |  " + level;
     ctx.font="12px Arial";
     ctx.fillStyle="gray";
-    ctx.fillText("P = Pause | R = Restart", 110, 390);
+    ctx.fillText("P = Pause | R = Restart", 130, 390);
 }
 
 // MOVE SNAKE
@@ -185,9 +202,9 @@ function checkFood(){
         }
     }
 }
-// Mendeteksi apakah kepala ular mengenai makanan bonus.
-// Area deteksi 30x30 px sesuai ukuran bonus food yang lebih besar.
-// Jika kena: skor +5, bonus food hilang, timer dibatalkan.
+// Mendeteksi apakah kepala ular mengenai makanan bonus
+// Area deteksi 30x30 px sesuai ukuran bonus food yang lebih besar
+// Jika kena: skor +5
 function checkBonusFood(){
     if(!bonusFood) return;
     if(
@@ -199,28 +216,28 @@ function checkBonusFood(){
         clearTimeout(bonusTimer);
         bonusFood = null;
         document.getElementById("scoreDisplay").innerText =
-            "Score : " + score + "  |  Level : " + level;
+            "Score : " + score + "  |   " + level;
     }
 }
 // UPDATE LEVEL
 // Menentukan level & kecepatan berdasarkan skor
 function updateLevel(){
-    if(score <= 25){
+    if(score <= 21){
         if(level !== "Level 1") showLevelTransition("Level 1");
         level = "Level 1";
         gameSpeed = 250;
     }
-    else if(score <= 50){
+    else if(score <= 31){
         if(level !== "Level 2") showLevelTransition("Level 2");
         level = "Level 2";
         gameSpeed = 200;
     }
-    else if(score <= 75){
+    else if(score <= 41){
         if(level !== "Level 3") showLevelTransition("Level 3");
         level = "Level 3";
         gameSpeed = 150;
     }
-    else if(score <= 100){
+    else if(score <= 51){
         if(level !== "Level 4") showLevelTransition("Level 4");
         level = "Level 4";
         gameSpeed = 100;
@@ -228,7 +245,7 @@ function updateLevel(){
     else{
         if(level !== "Level 5") showLevelTransition("Level 5");
         level = "Level 5";
-        gameSpeed = 50;
+        gameSpeed = 90;
     }
 }
 
@@ -239,8 +256,8 @@ function showLevelTransition(newLevel){
     pauseLevel = true; // Hentikan game loop
     playSound("levelup"); // Mainkan suara naik level
     levelPanel.classList.remove("hidden"); 
-    levelText.innerText = "LEVEL " + newLevel;
-    scoreText.innerText = "Score: " + score;
+    //levelText.innerText = "LEVEL " + newLevel;
+    //scoreText.innerText = "Score: " + score;
 }
 
 // NEXT LEVEL BUTTON
@@ -248,6 +265,8 @@ function showLevelTransition(newLevel){
 nextLevelBtn.addEventListener("click",()=>{
     pauseLevel = false;
     levelPanel.classList.add("hidden");
+    clearTimeout(loopTimeout);
+    loopTimeout = null;
     gameLoop();
 });
 
@@ -266,13 +285,18 @@ function checkCollision(){
 // GAME OVER
 // Menampilkan teks "GAME OVER" dan instruksi restart
 function drawGameOver(){
-    ctx.fillStyle = "black";
-    ctx.font = "30px Arial";
-    ctx.fillText("GAME OVER", 100, 190);
-    ctx.font = "16px Arial";
-    ctx.fillText("Tekan R untuk restart", 120, 230);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "white";
+    ctx.font = "bold 30px Arial";
+    ctx.fillText("GAME OVER", canvas.width / 2, 180);
+    ctx.font = "14px Arial";
+    ctx.fillStyle = "#ccc";
+    ctx.fillText("Skor Akhir : " + score + "  |  " + level, canvas.width / 2, 210);
+    ctx.font = "13px Arial";
+    ctx.fillStyle = "#aaa";
+    ctx.fillText("Tekan R untuk restart", canvas.width / 2, 235);
+    ctx.textAlign = "left"; // reset biar ga ngaruh ke elemen lain
 }
-
 // PAUSED
 // Menampilkan overlay gelap semi-transparan + teks PAUSED
 function drawPaused(){
@@ -287,14 +311,16 @@ function drawPaused(){
 // layar awal
 function drawStartScreen(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.font = "20px Arial";
-    ctx.fillText("Press Space to Play", 100, 200);
+    ctx.fillText("Press Space to Play", 110, 200);
 }
 
 // RESTART
 // Mereset semua state ke kondisi awal dan memulai ulang game loop
 function restartGame(){
+    clearTimeout(loopTimeout);
+    loopTimeout = null;
     snake = [{x:200, y:200}];
     dx = 20;
     dy = 0;
@@ -331,7 +357,11 @@ document.addEventListener("keydown",(event)=>{
     if(key === "p" || key === "P"){
         if(gameOver || pauseLevel) return;
         paused = !paused;
-        if(!paused) gameLoop();
+        if(!paused){
+            clearTimeout(loopTimeout);
+            loopTimeout = null;
+            gameLoop();
+        }
         return;
     }
 
@@ -400,7 +430,7 @@ function gameLoop(){
     drawBonusFood();
     drawScore();
 
-    setTimeout(gameLoop, gameSpeed);
+    loopTimeout = setTimeout(gameLoop, gameSpeed);
 }
 
 // MULAI
